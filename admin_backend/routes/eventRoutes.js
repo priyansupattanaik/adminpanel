@@ -23,11 +23,8 @@ router.post("/add-event", upload.single("eventImage"), addEvent);
 
 // Define route for fetching all events
 router.get("/all-events", (req, res) => {
-  console.log("Received request for all events");
-
   const query = "SELECT * FROM upcoming_events"; // SQL query to fetch events
 
-  // Execute the query using the db pool
   db.execute(query, (err, results) => {
     if (err) {
       console.error("Error fetching events:", err);
