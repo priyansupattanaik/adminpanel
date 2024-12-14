@@ -30,6 +30,35 @@ export default function UpcomingEvents() {
     fetchEvents();
   }, []);
 
+  const handleMarkAsCompleted = async (eventId: string) => {
+    try {
+      const response = await fetch(
+        `http://192.168.29.106:3001/api/events/complete-event/${eventId}`,
+        { method: "PUT" }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to mark event as completed");
+      }
+
+      // Update the event list by filtering out the completed event
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.id === eventId ? { ...event, status: "completed" } : event
+        )
+      );
+
+      // Alternatively, refetch the events list after marking the event as completed
+      const updatedEvents = await fetch(
+        "http://192.168.29.106:3001/api/events/all-events"
+      );
+      const data = await updatedEvents.json();
+      setEvents(data); // Update the state with the new event list
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="ml-64 p-6 bg-gray-100 min-h-screen">
       {/* Page Header */}
@@ -46,7 +75,9 @@ export default function UpcomingEvents() {
           <p className="text-lg font-medium text-gray-600">
             Total Upcoming Events
           </p>
-          <p className="text-3xl font-bold text-blue-600">{events.length}</p>
+          <p className="text-3xl font-bold text-blue-600">
+            {events.filter((event) => event.status === "upcoming").length}
+          </p>
         </div>
       </div>
 
@@ -61,35 +92,43 @@ export default function UpcomingEvents() {
           <p className="text-red-600">Error: {error}</p>
         ) : events.length > 0 ? (
           <div className="space-y-4">
-            {events.map((event: any) => (
-              <div
-                key={event.id}
-                className="flex items-center space-x-4 border-b pb-4 last:border-b-0"
-              >
-                <img
-                  src={`http://192.168.29.106:3001/uploads/${event.event_image}`} // Assuming the event image path is stored in `event_image`
-                  alt={event.event_title}
-                  className="w-32 h-32 rounded-md object-cover"
-                />
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    {event.event_title}
-                  </h3>
-                  <p className="text-gray-600 flex items-center mt-1">
-                    <FiCalendar className="mr-2" /> {event.event_date}
-                  </p>
-                  <p className="text-gray-600 flex items-center">
-                    <FiClock className="mr-2" /> {event.event_time}
-                  </p>
-                  <p className="text-gray-700 mt-2 flex items-start">
-                    <FiInfo className="mr-2 mt-1" /> {event.event_description}
-                  </p>
-                  <p className="text-gray-700 mt-2 flex items-start">
-                    <FiMapPin className="mr-2 mt-1" /> {event.event_location}
-                  </p>
+            {events
+              .filter((event) => event.status === "upcoming")
+              .map((event: any) => (
+                <div
+                  key={event.id}
+                  className="flex items-center space-x-4 border-b pb-4 last:border-b-0"
+                >
+                  <img
+                    src={`http://192.168.29.106:3001/uploads/${event.event_image}`} // Assuming the event image path is stored in `event_image`
+                    alt={event.event_title}
+                    className="w-32 h-32 rounded-md object-cover"
+                  />
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      {event.event_title}
+                    </h3>
+                    <p className="text-gray-600 flex items-center mt-1">
+                      <FiCalendar className="mr-2" /> {event.event_date}
+                    </p>
+                    <p className="text-gray-600 flex items-center">
+                      <FiClock className="mr-2" /> {event.event_time}
+                    </p>
+                    <p className="text-gray-700 mt-2 flex items-start">
+                      <FiInfo className="mr-2 mt-1" /> {event.event_description}
+                    </p>
+                    <p className="text-gray-700 mt-2 flex items-start">
+                      <FiMapPin className="mr-2 mt-1" /> {event.event_location}
+                    </p>
+                    <button
+                      onClick={() => handleMarkAsCompleted(event.id)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-md"
+                    >
+                      Mark as Completed
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         ) : (
           <p className="text-gray-600">No events available.</p>
