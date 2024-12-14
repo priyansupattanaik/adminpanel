@@ -32,27 +32,38 @@ function AddEvents() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
-      // Handle form submission logic here
-      console.log({
-        eventTitle,
-        eventDescription,
-        eventDate,
-        eventTime,
-        eventLocation,
-        eventImage,
-      });
+      const formData = new FormData();
+      formData.append("eventTitle", eventTitle);
+      formData.append("eventDescription", eventDescription);
+      formData.append("eventDate", eventDate);
+      formData.append("eventTime", eventTime);
+      formData.append("eventLocation", eventLocation);
 
-      // Reset form after submission
-      setEventTitle("");
-      setEventDescription("");
-      setEventDate("");
-      setEventTime("");
-      setEventLocation("");
-      setEventImage(null);
-      setErrors({});
+      // Make sure to append the file correctly
+      if (eventImage) formData.append("eventImage", eventImage);
+
+      try {
+        const response = await fetch(
+          "http://192.168.29.106:3001/api/events/add-event",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          alert("Event created successfully!");
+        } else {
+          const error = await response.text();
+          alert(`Error: ${error}`);
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        alert("An error occurred while submitting the event.");
+      }
     }
   };
 
@@ -63,7 +74,7 @@ function AddEvents() {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="ml-64 p-6 bg-gray-100 min-h-screen">
       {/* Header Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Add New Event</h1>

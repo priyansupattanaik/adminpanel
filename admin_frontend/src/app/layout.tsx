@@ -1,6 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 import Sidebar from "@/layouts/Sidebar";
 
@@ -9,19 +11,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname(); // Get the current route path
+  const pathname = usePathname();
 
-  // Check if the current route is the login page
-  const isLoginPage = pathname === "/Login";
+  const isLoginPage = pathname === "/";
 
   return (
     <html lang="en">
-      <body className="flex">
-        {/* Conditionally render Sidebar only if not on the login page */}
+      <body>
         {!isLoginPage && <Sidebar />}
-        <div className={`flex-1 ${!isLoginPage ? "ml-20 md:ml-64" : ""}`}>
-          <main>{children}</main>
-        </div>
+        {children}
       </body>
     </html>
   );

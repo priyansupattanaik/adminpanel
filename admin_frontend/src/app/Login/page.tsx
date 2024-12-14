@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import axios from "axios"; // Import Axios for API calls
+import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation"; // Use Next.js router for navigation
 import logo from "../../assets/siwalogo.png"; // Path to your logo
@@ -16,25 +16,51 @@ const Login = () => {
   // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Simple input validation
+    if (!username || !password) {
+      setErrorMessage("Both fields are required.");
+      return;
+    }
+
     try {
       // Clear previous error messages
       setErrorMessage("");
 
+      // Log the data before sending it
+      console.log("Sending data:", { username, password });
+
       // Send login request to the server
-      const response = await axios.post("http://192.168.29.106:3001/Login", {
+      const response = await axios.post("http://192.168.29.106:3001/", {
         username,
         password,
       });
 
-      // If login is successful, navigate to the main page
+      console.log("Response:", response); // Check the full response for debugging
+
+      // If login is successful, store the token (or any user info you need)
       if (response.status === 200) {
-        router.push("/");
+        localStorage.setItem("authToken", response.data.token);
+
+        // Clear the input fields
+        setUsername("");
+        setPassword("");
+
+        // Redirect to the dashboard page
+        router.push("/Dashboard/upcomingevents");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
 
-      // If login failed, display error message
-      setErrorMessage("Your Username and\nPassword are incorrect.");
+      if (error.response) {
+        setErrorMessage(
+          `Error: ${error.response.data.message || "Something went wrong."}`
+        );
+      } else if (error.message) {
+        setErrorMessage(`Network error: ${error.message}`);
+      } else {
+        setErrorMessage("An unknown error occurred.");
+      }
     }
   };
 

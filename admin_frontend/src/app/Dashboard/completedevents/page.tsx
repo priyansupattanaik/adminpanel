@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import { FiCalendar, FiMapPin, FiTrash2 } from "react-icons/fi";
+import classNames from "classnames";
 
+// Event Interface
 interface Event {
   title: string;
   date: string;
@@ -38,19 +40,23 @@ const CompletedEvents: React.FC = () => {
     },
   ]);
 
-  const getStatusStyle = (status: Event["status"]): string =>
-    status === "published"
-      ? "bg-green-100 text-green-800 border-green-300"
-      : "bg-gray-100 text-gray-800 border-gray-300";
+  // Get status styling
+  const getStatusStyle = (status: Event["status"]) =>
+    classNames(
+      "text-xs px-2 py-1 rounded-full border",
+      status === "published"
+        ? "bg-green-100 text-green-800 border-green-300"
+        : "bg-gray-100 text-gray-800 border-gray-300"
+    );
 
+  // Delete handler
   const handleDelete = (title: string) => {
-    // Remove event by filtering out the event with the matching title
     setEvents(events.filter((event) => event.title !== title));
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      {/* Header Section */}
+    <div className="ml-64 p-6 bg-gray-100 min-h-screen">
+      {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Completed Events</h1>
       </div>
@@ -61,17 +67,17 @@ const CompletedEvents: React.FC = () => {
           Events Overview
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
+          <div className="bg-blue-50 p-4 rounded-lg text-center">
             <p className="text-sm text-blue-600 font-medium">Total Events</p>
             <p className="text-2xl font-bold text-blue-800">{events.length}</p>
           </div>
-          <div className="bg-green-50 p-4 rounded-lg">
+          <div className="bg-green-50 p-4 rounded-lg text-center">
             <p className="text-sm text-green-600 font-medium">Published</p>
             <p className="text-2xl font-bold text-green-800">
               {events.filter((e) => e.status === "published").length}
             </p>
           </div>
-          <div className="bg-yellow-50 p-4 rounded-lg">
+          <div className="bg-yellow-50 p-4 rounded-lg text-center">
             <p className="text-sm text-yellow-600 font-medium">Drafts</p>
             <p className="text-2xl font-bold text-yellow-800">
               {events.filter((e) => e.status === "draft").length}
@@ -87,20 +93,17 @@ const CompletedEvents: React.FC = () => {
             key={`${event.title}-${index}`}
             className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
           >
-            {/* Event Header */}
+            {/* Header */}
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
                 {event.title}
               </h3>
-              <span
-                className={`text-xs px-2 py-1 rounded-full border ${getStatusStyle(
-                  event.status
-                )}`}
-              >
+              <span className={getStatusStyle(event.status)}>
                 {event.status}
               </span>
             </div>
-            {/* Event Details */}
+
+            {/* Details */}
             <div className="space-y-2 mb-4">
               <p className="text-gray-600 flex items-center">
                 <FiCalendar className="mr-2 text-gray-400" />
@@ -113,10 +116,10 @@ const CompletedEvents: React.FC = () => {
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end gap-4 mt-4">
+            <div className="flex justify-end">
               <button
                 onClick={() => handleDelete(event.title)}
-                className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-1 transition-colors duration-300"
+                className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md p-2 transition duration-200"
                 aria-label={`Delete ${event.title}`}
               >
                 <FiTrash2 className="w-5 h-5" />
