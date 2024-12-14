@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FiCalendar, FiClock, FiInfo } from "react-icons/fi";
+import { FiCalendar, FiClock, FiInfo, FiMapPin } from "react-icons/fi";
 
 export default function UpcomingEvents() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<any[]>([]); // Adjusted to handle any type of events
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -13,13 +13,13 @@ export default function UpcomingEvents() {
     const fetchEvents = async () => {
       try {
         const response = await fetch(
-          "http://192.168.29.106:3001/api/events/add-event"
-        ); // Update the endpoint to match your backend
+          "http://192.168.29.106:3001/api/events/all-events"
+        ); // Now it points to the GET endpoint for fetching events
         if (!response.ok) {
           throw new Error("Failed to fetch events");
         }
         const data = await response.json();
-        setEvents(data);
+        setEvents(data); // Set events data from the backend
       } catch (err) {
         setError(err.message);
       } finally {
@@ -61,28 +61,31 @@ export default function UpcomingEvents() {
           <p className="text-red-600">Error: {error}</p>
         ) : events.length > 0 ? (
           <div className="space-y-4">
-            {events.map((event) => (
+            {events.map((event: any) => (
               <div
                 key={event.id}
                 className="flex items-center space-x-4 border-b pb-4 last:border-b-0"
               >
                 <img
-                  src={event.image}
-                  alt={event.name}
+                  src={`http://192.168.29.106:3001/uploads/${event.event_image}`} // Assuming the event image path is stored in `event_image`
+                  alt={event.event_title}
                   className="w-32 h-32 rounded-md object-cover"
                 />
                 <div>
                   <h3 className="text-xl font-semibold text-gray-800">
-                    {event.name}
+                    {event.event_title}
                   </h3>
                   <p className="text-gray-600 flex items-center mt-1">
-                    <FiCalendar className="mr-2" /> {event.date}
+                    <FiCalendar className="mr-2" /> {event.event_date}
                   </p>
                   <p className="text-gray-600 flex items-center">
-                    <FiClock className="mr-2" /> {event.time}
+                    <FiClock className="mr-2" /> {event.event_time}
                   </p>
                   <p className="text-gray-700 mt-2 flex items-start">
-                    <FiInfo className="mr-2 mt-1" /> {event.description}
+                    <FiInfo className="mr-2 mt-1" /> {event.event_description}
+                  </p>
+                  <p className="text-gray-700 mt-2 flex items-start">
+                    <FiMapPin className="mr-2 mt-1" /> {event.event_location}
                   </p>
                 </div>
               </div>
