@@ -2,14 +2,13 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const { addEvent } = require("../controllers/eventController");
-const db = require("../config/db"); // Import the db connection pool
+const db = require("../config/db");
 
 const router = express.Router();
 
-// Set up multer storage for image uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../uploads/")); // Ensure the correct path for uploads
+    cb(null, path.join(__dirname, "../uploads/"));
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
@@ -18,10 +17,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Define route for adding an event
 router.post("/add-event", upload.single("eventImage"), addEvent);
 
-// Define route for fetching all events
 router.get("/all-events", (req, res) => {
   const query = "SELECT * FROM upcoming_events"; // SQL query to fetch events
 
@@ -31,8 +28,8 @@ router.get("/all-events", (req, res) => {
       return res.status(500).json({ message: "Error fetching events" });
     }
 
-    console.log("Fetched events:", results); // Log the result to ensure data is fetched
-    res.status(200).json(results); // Send events data as JSON response
+    console.log("Fetched events:", results);
+    res.status(200).json(results);
   });
 });
 
@@ -40,7 +37,6 @@ router.get("/all-events", (req, res) => {
 router.put("/complete-event/:id", (req, res) => {
   const eventId = req.params.id;
 
-  // Update the event status to 'completed' in the database
   const query = "UPDATE upcoming_events SET status = 'completed' WHERE id = ?";
   db.execute(query, [eventId], (err, results) => {
     if (err) {
@@ -53,7 +49,7 @@ router.put("/complete-event/:id", (req, res) => {
 
 // Fetch all completed events
 router.get("/completed-events", (req, res) => {
-  console.log("Incoming request to /completed-events"); // Log the request
+  console.log("Incoming request to /completed-events");
   const query = "SELECT * FROM upcoming_events WHERE status = 'completed'";
 
   db.query(query, (err, results) => {
@@ -61,7 +57,7 @@ router.get("/completed-events", (req, res) => {
       console.error("Database error:", err);
       return res.status(500).json({ message: "Error fetching events" });
     }
-    console.log("Query results:", results); // Log query results
+    console.log("Query results:", results);
     res.status(200).json(results);
   });
 });
@@ -69,7 +65,6 @@ router.get("/completed-events", (req, res) => {
 router.delete("/delete-completed-event/:id", (req, res) => {
   const eventId = req.params.id;
 
-  // Update the query to delete from upcoming_events if that's where the events are stored
   const query =
     "DELETE FROM upcoming_events WHERE id = ? AND status = 'completed'";
 

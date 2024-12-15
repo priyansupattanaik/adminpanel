@@ -1,6 +1,6 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const { getUserByUsername } = require("../models/userModel"); // Assuming you have this function
+const { getUserByUsername } = require("../models/userModel");
 
 const router = express.Router();
 
@@ -18,19 +18,16 @@ router.post("/", (req, res) => {
   // Fetch user from the database by username
   getUserByUsername(username, (error, results) => {
     if (error) {
-      console.error("Database error:", error); // Log the actual error for debugging
+      console.error("Database error:", error);
       return res.status(500).json({ message: "Database error", error });
     }
-
-    // Check if user exists
     if (results.length === 0) {
-      console.warn(`Login failed for username: ${username}`); // Log invalid login attempt
+      console.warn(`Login failed for username: ${username}`);
       return res.status(401).json({ message: "Invalid username or password" });
     }
 
     const user = results[0];
 
-    // Directly compare password (no hashing required)
     if (password !== user.password) {
       console.warn(
         `Login failed for username: ${username} - Password mismatch`
@@ -38,14 +35,13 @@ router.post("/", (req, res) => {
       return res.status(401).json({ message: "Invalid username or password" });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { username: user.username, role: user.role },
-      process.env.JWT_SECRET || "secret_key", // Use a proper secret key
+      process.env.JWT_SECRET || "secret_key",
       { expiresIn: "1h" }
     );
 
-    console.log(`Login successful for username: ${username}`); // Log successful login
+    console.log(`Login successful for username: ${username}`);
 
     return res.status(200).json({ message: "Login successful", token });
   });
