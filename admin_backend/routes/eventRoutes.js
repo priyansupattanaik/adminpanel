@@ -30,6 +30,8 @@ router.get("/all-events", (req, res) => {
       console.error("Error fetching events:", err);
       return res.status(500).json({ message: "Error fetching events" });
     }
+
+    console.log("Fetched events:", results); // Log the result to ensure data is fetched
     res.status(200).json(results); // Send events data as JSON response
   });
 });

@@ -10,11 +10,11 @@ export default function components() {
   return (
     <>
       <Login />
-      <UpcomingEvents />
+      {/* <UpcomingEvents />
       <CompletedEvents />
       <AddEvents />
       <Notifications />
-      <Profile />
+      <Profile /> */}
     </>
   );
 }
