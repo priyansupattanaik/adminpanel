@@ -53,15 +53,15 @@ router.put("/complete-event/:id", (req, res) => {
 
 // Fetch all completed events
 router.get("/completed-events", (req, res) => {
+  console.log("Incoming request to /completed-events"); // Log the request
   const query = "SELECT * FROM upcoming_events WHERE status = 'completed'";
 
-  db.execute(query, (err, results) => {
+  db.query(query, (err, results) => {
     if (err) {
-      console.error("Error fetching completed events:", err);
-      return res
-        .status(500)
-        .json({ message: "Error fetching completed events" });
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Error fetching events" });
     }
+    console.log("Query results:", results); // Log query results
     res.status(200).json(results);
   });
 });
