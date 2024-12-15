@@ -50,12 +50,10 @@ export default function Sidebar() {
 
   return (
     <aside className="fixed top-0 left-0 h-screen w-64 bg-white border-r shadow-md z-50">
-      {/* Logo */}
       <div className="flex justify-center items-center py-6 border-b">
         <Image src={logo} alt="SIWA Logo" width={150} height={150} />
       </div>
 
-      {/* Navigation */}
       <nav className="mt-6 px-4">
         {nav.map((item) => {
           const isActive = item.paths.some((path) => pathname === path);

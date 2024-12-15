@@ -4,22 +4,21 @@ import { useEffect, useState } from "react";
 import { FiCalendar, FiClock, FiInfo, FiMapPin } from "react-icons/fi";
 
 export default function UpcomingEvents() {
-  const [events, setEvents] = useState<any[]>([]); // Adjusted to handle any type of events
+  const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch events from the backend
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const response = await fetch(
           "http://192.168.29.106:3001/api/events/all-events"
-        ); // Now it points to the GET endpoint for fetching events
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch events");
         }
         const data = await response.json();
-        setEvents(data); // Set events data from the backend
+        setEvents(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -41,19 +40,17 @@ export default function UpcomingEvents() {
         throw new Error("Failed to mark event as completed");
       }
 
-      // Update the event list by filtering out the completed event
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
           event.id === eventId ? { ...event, status: "completed" } : event
         )
       );
 
-      // Alternatively, refetch the events list after marking the event as completed
       const updatedEvents = await fetch(
         "http://192.168.29.106:3001/api/events/all-events"
       );
       const data = await updatedEvents.json();
-      setEvents(data); // Update the state with the new event list
+      setEvents(data);
     } catch (err) {
       setError(err.message);
     }
@@ -61,12 +58,10 @@ export default function UpcomingEvents() {
 
   return (
     <div className="ml-64 p-6 bg-gray-100 min-h-screen">
-      {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-800">Upcoming Events</h1>
       </div>
 
-      {/* Events Overview */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">
           Events Overview
@@ -81,7 +76,6 @@ export default function UpcomingEvents() {
         </div>
       </div>
 
-      {/* Event List */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">
           Upcoming Events List
@@ -100,7 +94,7 @@ export default function UpcomingEvents() {
                   className="flex items-center space-x-4 border-b pb-4 last:border-b-0"
                 >
                   <img
-                    src={`http://192.168.29.106:3001/uploads/${event.event_image}`} // Assuming the event image path is stored in `event_image`
+                    src={`http://192.168.29.106:3001/uploads/${event.event_image}`}
                     alt={event.event_title}
                     className="w-32 h-32 rounded-md object-cover"
                   />

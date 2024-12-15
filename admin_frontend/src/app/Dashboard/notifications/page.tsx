@@ -7,7 +7,7 @@ interface Suggestion {
   id: number;
   name: string;
   suggestion: string;
-  timestamp: string; // Timestamp from the database
+  timestamp: string;
 }
 
 export default function Notifications() {
@@ -15,14 +15,13 @@ export default function Notifications() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch suggestions from backend
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
-        console.log("Fetching suggestions..."); // Log to check if fetch is called
+        console.log("Fetching suggestions...");
         const response = await fetch(
           "http://192.168.29.106:5001/api/suggestions"
-        ); // Replace with actual API URL
+        );
 
         if (!response.ok) {
           throw new Error(
@@ -31,10 +30,10 @@ export default function Notifications() {
         }
 
         const data = await response.json();
-        console.log("Fetched suggestions:", data); // Log fetched data to verify format
+        console.log("Fetched suggestions:", data);
         setSuggestions(data);
       } catch (err: any) {
-        console.error("Error fetching suggestions:", err); // Log the error
+        console.error("Error fetching suggestions:", err);
         setError("Failed to fetch suggestions");
       } finally {
         setLoading(false);
@@ -44,7 +43,6 @@ export default function Notifications() {
     fetchSuggestions();
   }, []);
 
-  // Format the timestamp to a readable time (relative time)
   const formatTimeAgo = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -60,16 +58,15 @@ export default function Notifications() {
   };
 
   if (loading) {
-    return <div>Loading...</div>; // Add a loading spinner or message
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>; // Display error if fetch fails
+    return <div>Error: {error}</div>;
   }
 
   return (
     <div className="ml-64 p-6 bg-gray-100 min-h-screen">
-      {/* Header Section */}
       <div className="mb-8">
         <div className="flex justify-between items-center">
           <div>
@@ -78,7 +75,6 @@ export default function Notifications() {
         </div>
       </div>
 
-      {/* Suggestions List */}
       <div className="bg-white rounded-lg shadow-md">
         {suggestions.length === 0 ? (
           <div className="text-center py-12">
