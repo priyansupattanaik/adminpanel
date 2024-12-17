@@ -8,11 +8,14 @@ const CompletedEvents: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const API_IP = process.env.NEXT_PUBLIC_API_IP;
+  const BASE_API_URL = `http://${API_IP}:3001`;
+
   useEffect(() => {
     const fetchCompletedEvents = async () => {
       try {
         const response = await fetch(
-          "http://192.168.29.106:3001/api/events/completed-events"
+          `${BASE_API_URL}/api/events/completed-events`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch completed events");
@@ -32,7 +35,7 @@ const CompletedEvents: React.FC = () => {
   const handleDeleteEvent = async (eventId: string) => {
     try {
       const response = await fetch(
-        `http://192.168.29.106:3001/api/events/delete-completed-event/${eventId}`,
+        `${BASE_API_URL}/api/events/delete-completed-event/${eventId}`,
         { method: "DELETE" }
       );
 

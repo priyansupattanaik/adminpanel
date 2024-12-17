@@ -15,13 +15,14 @@ export default function Notifications() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const API_IP = process.env.NEXT_PUBLIC_API_IP;
+  const BASE_API_URL = `http://${API_IP}:5001`;
+
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
         console.log("Fetching suggestions...");
-        const response = await fetch(
-          "http://192.168.29.106:5001/api/suggestions"
-        );
+        const response = await fetch(`${BASE_API_URL}/api/suggestions`);
 
         if (!response.ok) {
           throw new Error(

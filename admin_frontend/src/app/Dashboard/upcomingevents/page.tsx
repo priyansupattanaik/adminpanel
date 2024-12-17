@@ -3,23 +3,26 @@
 import { useEffect, useState } from "react";
 import { FiCalendar, FiClock, FiInfo, FiMapPin } from "react-icons/fi";
 
+const apiIp = process.env.NEXT_PUBLIC_API_IP; // Fetch IP from environment variable
+const port = "3001";
+
 export default function UpcomingEvents() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const baseUrl = `http://${apiIp}:${port}`;
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(
-          "http://192.168.29.106:3001/api/events/all-events"
-        );
+        const response = await fetch(`${baseUrl}/api/events/all-events`);
         if (!response.ok) {
           throw new Error("Failed to fetch events");
         }
         const data = await response.json();
         setEvents(data);
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
       } finally {
         setLoading(false);
@@ -32,26 +35,28 @@ export default function UpcomingEvents() {
   const handleMarkAsCompleted = async (eventId: string) => {
     try {
       const response = await fetch(
-        `http://192.168.29.106:3001/api/events/complete-event/${eventId}`,
-        { method: "PUT" }
+        `${baseUrl}/api/events/complete-event/${eventId}`,
+        {
+          method: "PUT",
+        }
       );
 
       if (!response.ok) {
         throw new Error("Failed to mark event as completed");
       }
 
+      // Update the local state after marking as completed
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
           event.id === eventId ? { ...event, status: "completed" } : event
         )
       );
 
-      const updatedEvents = await fetch(
-        "http://192.168.29.106:3001/api/events/all-events"
-      );
+      // Fetch updated events
+      const updatedEvents = await fetch(`${baseUrl}/api/events/all-events`);
       const data = await updatedEvents.json();
       setEvents(data);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
   };
@@ -94,7 +99,7 @@ export default function UpcomingEvents() {
                   className="flex items-center space-x-4 border-b pb-4 last:border-b-0"
                 >
                   <img
-                    src={`http://192.168.29.106:3001/uploads/${event.event_image}`}
+                    src={`${baseUrl}/uploads/${event.event_image}`}
                     alt={event.event_title}
                     className="w-32 h-32 rounded-md object-cover"
                   />

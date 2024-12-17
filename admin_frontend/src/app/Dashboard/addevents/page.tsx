@@ -42,16 +42,16 @@ function AddEvents() {
       formData.append("eventTime", eventTime);
       formData.append("eventLocation", eventLocation);
 
+      const API_IP = process.env.NEXT_PUBLIC_API_IP;
+      const BASE_API_URL = `http://${API_IP}:3001`;
+
       if (eventImage) formData.append("eventImage", eventImage);
 
       try {
-        const response = await fetch(
-          "http://192.168.29.106:3001/api/events/add-event",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+        const response = await fetch(`${BASE_API_URL}/api/events/add-event`, {
+          method: "POST",
+          body: formData,
+        });
 
         if (response.ok) {
           alert("Event created successfully!");

@@ -13,6 +13,9 @@ const Login = () => {
 
   const router = useRouter();
 
+  const API_IP = process.env.NEXT_PUBLIC_API_IP;
+  const BASE_API_URL = `http://${API_IP}:3001`;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -26,12 +29,10 @@ const Login = () => {
 
       console.log("Sending data:", { username, password });
 
-      const response = await axios.post("http://192.168.29.106:3001/", {
+      const response = await axios.post(`${BASE_API_URL}/`, {
         username,
         password,
       });
-
-      console.log("Response:", response);
 
       if (response.status === 200) {
         localStorage.setItem("authToken", response.data.token);
